@@ -32,7 +32,7 @@ public class Alumno {
     private int idCurso;
 
     @OneToMany 
-     @JoinColumn(name = "idCursos")   
+     @JoinColumn(name = "idCurso")   
      private List<Curso> cursos;
 
     public int getId() {
