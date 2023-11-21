@@ -32,20 +32,32 @@ public class ControllerWeb {
 
     @GetMapping("/cursos")
     public String cursos(
-        @RequestParam(name = "buscarTitulo", required = false, defaultValue = "") String buscarTitulo,
+        @RequestParam(name="buscarTitulo", required = false, defaultValue = "") String buscarTitulo,       
             Model model) {
         model.addAttribute("mensajeCliente", mensajecr);
         model.addAttribute("curso", new Curso());
-                
+        
+        model.addAttribute("lista", ((List<Curso>)cr.findAll())
+                .stream()
+                .filter(c->c.getTitulo().toLowerCase().contains(buscarTitulo.toLowerCase()))
+                .toList()
+        );
         return "cursos";
     }
 
     @GetMapping("/alumnos")
     public String alumnos(
         @RequestParam(name = "buscarApellido", required = false, defaultValue = "") String buscarApellido,
+        
             Model model) {
         model.addAttribute("mensajeCliente", mensajear);
         model.addAttribute("curso", new Alumno());
+
+        model.addAttribute("lista", ((List<Alumno>)ar.findAll())
+                .stream()
+                .filter(a->a.getApellido().toLowerCase().contains(buscarApellido.toLowerCase()))
+                .toList() 
+        );
                 
         return "alumnos";
     }
