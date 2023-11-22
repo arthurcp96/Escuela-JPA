@@ -32,8 +32,8 @@ public class Alumno {
     private int idCurso;
 
     @OneToMany 
-     @JoinColumn(name = "idCurso")   
-     private List<Curso> cursos;
+      @JoinColumn(name = "idCurso")   
+      private List<Curso> cursos;
 
     public int getId() {
         return id;

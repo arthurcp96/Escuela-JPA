@@ -20,6 +20,7 @@ import ar.org.centro8.escuela.repositories.CursoRepository;
 public class ControllerWeb {
     @Autowired
     private CursoRepository cr;
+    @Autowired
     private AlumnoRepository ar;
 
     private String mensajecr = "Ingrese un nuevo curso!";
@@ -34,7 +35,7 @@ public class ControllerWeb {
     public String cursos(
         @RequestParam(name="buscarTitulo", required = false, defaultValue = "") String buscarTitulo,       
             Model model) {
-        model.addAttribute("mensajeCliente", mensajecr);
+        model.addAttribute("mensajeCurso", mensajecr);
         model.addAttribute("curso", new Curso());
         
         model.addAttribute("lista", ((List<Curso>)cr.findAll())
@@ -50,19 +51,19 @@ public class ControllerWeb {
         @RequestParam(name = "buscarApellido", required = false, defaultValue = "") String buscarApellido,
         
             Model model) {
-        model.addAttribute("mensajeCliente", mensajear);
-        model.addAttribute("curso", new Alumno());
+        model.addAttribute("mensajeAlumno", mensajear);
+        model.addAttribute("alumno", new Alumno());
 
         model.addAttribute("lista", ((List<Alumno>)ar.findAll())
                 .stream()
                 .filter(a->a.getApellido().toLowerCase().contains(buscarApellido.toLowerCase()))
-                .toList() 
+                .toList()
         );
                 
         return "alumnos";
     }
 
-    @PostMapping("/save")
+    @PostMapping("/saveCurso")
     public String save(@ModelAttribute Curso curso) {
         cr.save(curso);
         if (curso.getId() > 0) {
@@ -73,15 +74,15 @@ public class ControllerWeb {
         return "redirect:cursos";
     }
 
-    @PostMapping("/save")
-    public String save(@ModelAttribute Alumno alumno) {
-        ar.save(alumno);
-        if (alumno.getId()>0) {
-            mensajear = "Se guardo el alumno con id: " + alumno.getId() + "!";
+    @PostMapping("/saveAlumno")
+     public String save(@ModelAttribute Alumno alumno) {
+         ar.save(alumno);
+         if (alumno.getId() > 0) {
+             mensajear = "Se guardo el alumno con id: " + alumno.getId() + "!";
             
-        } else {
-            mensajear = "No se pudo guardar el alumno";
-        }
-        return "redirect:alumnos";
-    }
+         } else {
+             mensajear = "No se pudo guardar el alumno";
+         }
+         return "redirect:alumnos";
+     }
 }
