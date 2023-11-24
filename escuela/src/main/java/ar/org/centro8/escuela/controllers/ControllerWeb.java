@@ -1,6 +1,5 @@
 package ar.org.centro8.escuela.controllers;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,40 +32,41 @@ public class ControllerWeb {
 
     @GetMapping("/cursos")
     public String cursos(
-        @RequestParam(name="buscarTitulo", required = false, defaultValue = "") String buscarTitulo,       
+            @RequestParam(name = "buscarTitulo", required = false, defaultValue = "") String buscarTitulo,
             Model model) {
         model.addAttribute("mensajeCurso", mensajecr);
         model.addAttribute("curso", new Curso());
-        
-        model.addAttribute("lista", ((List<Curso>)cr.findAll())
+
+        model.addAttribute("lista", ((List<Curso>) cr.findAll())
                 .stream()
-                .filter(c->c.getTitulo().toLowerCase().contains(buscarTitulo.toLowerCase()))
-                .toList()
-        );
+                .filter(c -> c.getTitulo().toLowerCase().contains(buscarTitulo.toLowerCase()))
+                .toList());
         return "cursos";
     }
 
     @GetMapping("/alumnos")
     public String alumnos(
-        @RequestParam(name = "buscarApellido", required = false, defaultValue = "") String buscarApellido,
-        
+            @RequestParam(name = "buscarApellido", required = false, defaultValue = "") String buscarApellido,
+
             Model model) {
         model.addAttribute("mensajeAlumno", mensajear);
         model.addAttribute("alumno", new Alumno());
 
-        model.addAttribute("lista", ((List<Alumno>)ar.findAll())
+        model.addAttribute("listaA", ((List<Alumno>) ar.findAll())
                 .stream()
-                .filter(a->a.getApellido().toLowerCase().contains(buscarApellido.toLowerCase()))
-                .toList()
-        );
-                
+                .filter(a -> a.getApellido().toLowerCase().contains(buscarApellido.toLowerCase()))
+                .toList());
+        model.addAttribute("listaC", ((List<Curso>) cr.findAll()));
+
         return "alumnos";
     }
 
     @PostMapping("/saveCurso")
     public String save(@ModelAttribute Curso curso) {
+        
         cr.save(curso);
         if (curso.getId() > 0) {
+            
             mensajecr = "Se guardo el curso con id: " + curso.getId() + "!";
         } else {
             mensajecr = "No se pudo guardar el curso";
@@ -75,14 +75,36 @@ public class ControllerWeb {
     }
 
     @PostMapping("/saveAlumno")
-     public String save(@ModelAttribute Alumno alumno) {
-         ar.save(alumno);
-         if (alumno.getId() > 0) {
-             mensajear = "Se guardo el alumno con id: " + alumno.getId() + "!";
+    public String save(@ModelAttribute Alumno alumno) {
+        
+        if (alumno.getEdad() >= 18) {
             
-         } else {
-             mensajear = "No se pudo guardar el alumno";
-         }
-         return "redirect:alumnos";
-     }
+            
+            ar.save(alumno);
+            mensajear = "Se guardo el alumno con id: " + alumno.getId() + "!";
+
+        } else {
+            mensajear = "No se pudo guardar el alumno";
+        }
+
+        return "redirect:alumnos";
+
+    }
+
+   @PostMapping("alumnoRemove") 
+   public String alumnoRemove(@RequestParam(name="idBorrar", defaultValue="0", required = false) int idBorrar){
+
+    ar.deleteById(idBorrar); 
+    mensajear = "Se borro el alumno id: "+idBorrar+"!";   
+    return "redirect:alumnos";     
+   }
+
+   @PostMapping("cursoRemove") 
+   public String cursoRemove(@RequestParam(name="idBorrar", defaultValue="0", required = false) int idBorrar){
+
+    cr.deleteById(idBorrar); 
+    mensajear = "Se borro el curso id: "+idBorrar+"!";   
+    return "redirect:cursos";     
+   }
+
 }
